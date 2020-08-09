@@ -25,7 +25,19 @@ fi
 
 #prepared function for rcon connection using mcrcon
 function bkrcon {
-        mcrcon -H $RCONHOST -p $RCONPASS -P $RCONPORT "$1"
+    mcrcon -H $RCONHOST -p $RCONPASS -P $RCONPORT "$1"
+}
+
+function ingamemsg {
+    if [ "$INGAMENOTIFY" = true ]; then
+        bkrcon "say §l§4Beginning Backup. World saving temporarily stopped."
+    fi
+}
+
+function discordmsg {
+    if [ "$DISCORDNOTIFY" = true ]; then
+        bkrcon "discord bcast $DISCORDCHANNEL $1"
+    fi
 }
 
 #mount remote host as sshfs using fuse
@@ -36,8 +48,8 @@ then
 fi
 
 #message server and discord to inform of backup
-bkrcon "say §l§4Beginning Backup. World saving temporarily stopped."
-bkrcon "discord bcast #backup-log :observer::bangbang:**Beginning $SERVERNAME Backup. World saving temporarily stopped.**"
+ingamemsg "say §l§4Beginning Backup. World saving temporarily stopped."
+discordmsg ":observer::bangbang:**Beginning $SERVERNAME Backup. World saving temporarily stopped.**"
 
 #turn off world saving so files are not in use, and force an immediate world save
 bkrcon "save-off"
@@ -58,9 +70,9 @@ rdiff-backup -v0 --remove-older-than $BKPURGE --force $BKPATH
 bkrcon "save-on"
 
 #let ingame and discord know backup is complete
-bkrcon "say §l§4Backup complete. World now saving."
-bkrcon "discord bcast #backup-log :observer::bangbang:**$SERVERNAME Backup complete. World now saving.*"
-bkrcon "discord bcast #backup-log :observer::bangbang:**$SERVERNAME Current Backup size:`du -hd 0 $BKPATH | awk '{print $1}'`"
+ingamemsg "say §l§4Backup complete. World now saving."
+discordmsg ":observer::bangbang:**$SERVERNAME Backup complete. World now saving.*"
+discordmsg ":observer::bangbang:**$SERVERNAME Current Backup size:`du -hd 0 $BKPATH | awk '{print $1}'`"
 
 #unmount remote server
 fusermount -u $MNTPATH

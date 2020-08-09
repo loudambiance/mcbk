@@ -33,3 +33,12 @@ BKEXCLUDE="/mnt/bloomsurvival/plugins/dynmap"
 
 #Purge backups older than this
 BKPURGE=14D
+
+#Notify Discord?
+DISCORDNOTIFY=true
+
+#Notify Ingame?
+INGAMENOTIFY=true
+
+#Channel to broadcast to in discord
+DISCORDCHANNEL="#backup-log"
